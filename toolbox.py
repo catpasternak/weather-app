@@ -183,14 +183,17 @@ def get_day_hist_temp(latitude, longitude, day_num=-1, url=URL_HISTORIC, api_key
     Gets any day back (from -5 to 0) 1 day temp list.
     """
     if not day_num:
-        time_threshold = time.time()
+        time_threshold = int(time.time() - 5)
     else:
         timezone = get_city_timezone(latitude, longitude)
         time_threshold_local = prev_n_day_end_local(timezone, day_number=day_num)
         time_threshold = time_threshold_local - timezone
+    # print(latitude, longitude)
+    # print(time_threshold)
     params = {'appid': api_key, 'lat': latitude, 'lon': longitude, 'dt': time_threshold, 'units': 'metric'}
     resp = requests.get(url, params=params)
     data = resp.json()
+    # print(data)
     day_temp_list = [record['temp'] for record in data['hourly']]
     return day_temp_list
 
@@ -223,9 +226,9 @@ def fill_temperatures(session, cls):
         hist_temps_dumped = (json.dumps(lst) for lst in historic_temperatures[:-1])
         city.historic_5, city.historic_4, city.historic_3, city.historic_2, city.historic_1 = hist_temps_dumped
 
-        today_hist_temperatures = historic_temperatures[-1]
-        today_full_temperatures = today_hist_temperatures.extend(forecast_today)
-        city.today = json.dumps(today_full_temperatures)
+        today_temperatures = historic_temperatures[-1]
+        today_temperatures.extend(forecast_today)
+        city.today = json.dumps(today_temperatures)
 
         forecast_temps_dumped = (json.dumps(lst) for lst in forecast_4days)
         city.forecast_1, city.forecast_2, city.forecast_3, city.forecast_4 = forecast_temps_dumped
