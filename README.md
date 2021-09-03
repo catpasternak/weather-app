@@ -9,8 +9,8 @@ for requesting data from geocoding and weather services.
 Thread number argument is optional, has a default value of 4
 and should be used with flag '--threads' or '-t'.
 
-There is also forth optional argument with flag '--database' or '-d',
-that sets path to database system and file location. It is currently set to
+There is also fourth optional argument with flag '--database' or '-d',
+that sets path to database system and file location. It is set to
 'sqlite:///db.sqlite3'. Current configuration is strongly recommended
 since application was tested only with python built-in SQLite database engine.
 

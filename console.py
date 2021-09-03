@@ -1,4 +1,5 @@
 import click
+
 from models import *
 from toolbox.db_tools import *
 from toolbox.os_tools import *
@@ -29,16 +30,14 @@ def main(source_path, output_path, threads, database):
     if not os.path.isdir(unzipped):
         click.echo(f"ERROR: {unzipped}")
         return False
-
     if threads > 9:
         threads = 9
-        click.echo(f'You exceeded maximum recommended number of threads for this application. It is reset to 9.')
+        click.echo('You exceeded maximum recommended number of threads for this application. It is reset to 9.')
     click.echo(
         f'Execution started.\n'
         f'Source data will be retrieved from: {source_path}\n'
         f'Results will be saved in directory: {output_path}\n'
     )
-
     start = time.time()
 
     session = start_db_session(database)

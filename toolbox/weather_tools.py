@@ -13,6 +13,15 @@ URL_HISTORIC = "https://api.openweathermap.org/data/2.5/onecall/timemachine"
 
 
 def get_city_timezone(latitude, longitude, url=URL_CURRENT, api_key=WEATHER_API_KEY):
+    """
+    Fetches city timezone from OpenWeatherMap API
+    :param latitude: city latitude
+    :param longitude: city longitude
+    :param url: base url for API call
+    :param api_key: API key provided by OpenWeatherMap
+    :return: timezone (i.e. time shift in seconds from UTC time)
+    :rtype: int
+    """
     params = {'appid': api_key, 'lat': latitude, 'lon': longitude}
     resp = requests.get(url, params=params)
     return resp.json()['timezone']
@@ -20,7 +29,15 @@ def get_city_timezone(latitude, longitude, url=URL_CURRENT, api_key=WEATHER_API_
 
 def get_day_hist_temp(day_num, latitude, longitude, url=URL_HISTORIC, api_key=WEATHER_API_KEY):
     """
-    Gets any day back (from -5 to 0) 1 day temp list.
+    Gets one day temperatures list. Days possible range: from 5 days ago till current moment.
+    Today temperatures list is provided for part of the day that has passed.
+    :param day_num: day number in range (-5, 0)
+    :param latitude: city latitude
+    :param longitude: city longitude
+    :param url: base url for API calls for 5 days historic info
+    :param api_key: API key provided by OpenWeatherMap
+    :return: list of day temperatures fixed every hour (24 values per day except today that is less)
+    :rtype: List[float]
     """
     if not day_num:
         time_threshold = int(time.time() - 5)
@@ -36,6 +53,15 @@ def get_day_hist_temp(day_num, latitude, longitude, url=URL_HISTORIC, api_key=WE
 
 
 def get_all_hist_temp(coords_tuple, threads=4):
+    """
+    Gets historic day temperature lists for all days in range: from 5 days ago till current moment.
+    One list per day. Today temperatures list is provided for part of the day that has passed.
+    :param coords_tuple: latitude and longitude
+    :type coords_tuple: tuple[float]
+    :param threads: number of threads for parallel request to weather service API
+    :return: Lists of day temperatures for last 5 days plus part of today
+    :rtype: Generator[list[float]]
+    """
     lat, lon = coords_tuple
     get_city_day_temp = partial(get_day_hist_temp, latitude=lat, longitude=lon)
     days = (day for day in range(-5, 1))
@@ -46,7 +72,10 @@ def get_all_hist_temp(coords_tuple, threads=4):
 
 def get_forecast_temp_list(coord_tuple):
     """
-    Gets tuple of 2 elements: list of today forecast temperatures and tuple of lists of coming 4 days data
+    Gets today and 4 coming days temperature forecast
+    :param coord_tuple: latitude and longitude
+    :return: tuple of 2 elements: list of today forecast temperatures and list of lists of coming 4 days temps
+    :rtype: tuple[list[list],list[list[list]]]
     """
     latitude, longitude = coord_tuple
     tz_shift = get_city_timezone(latitude, longitude)
