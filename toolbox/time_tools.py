@@ -10,14 +10,14 @@ def ts_to_datetime(timestamp):
     return datetime.datetime.utcfromtimestamp(timestamp)
 
 
-def today_start_local_ts(curr_local_ts, tz_shift):  # check
+def today_start_local_ts(curr_local_ts, tz_shift):
     curr_local_datetime = ts_to_datetime(curr_local_ts)
     day_start_local_datetime = curr_local_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
     day_start_local_timestamp = day_start_local_datetime.timestamp() + tz_shift
     return int(day_start_local_timestamp)
 
 
-def today_end_local_ts(tz_shift):  # check
+def today_end_local_ts(tz_shift):
     curr_local_ts = local_timestamp_now(tz_shift)
     curr_local_datetime = ts_to_datetime(curr_local_ts)
     day_start_local_datetime = curr_local_datetime.replace(hour=0, minute=0, second=0, microsecond=0)

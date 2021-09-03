@@ -19,7 +19,7 @@ class Hotel(Base):
         return f'<{self.country} | {self.city} | {self.name}>'
 
 
-class Temperature(Base):
+class CityData(Base):
     __tablename__ = 'temperature'
     id = sa.Column(sa.Integer, primary_key=True)
     country = sa.Column(sa.String)

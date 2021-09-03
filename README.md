@@ -6,8 +6,8 @@ Results will be written to output folder (that is second argument).
 
 Third argument is number of threads that will be used
 for requesting data from geocoding and weather services.
-Thread number argument is optional and should be used with flag
-'--threads' or '-t'.
+Thread number argument is optional, has a default value of 4
+and should be used with flag '--threads' or '-t'.
 
 Example:
 
