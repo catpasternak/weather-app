@@ -18,4 +18,5 @@ Example:
 
 >>> python3 console.py source_data/hotels.zip output_data --threads 4
 
+
 All required dependencies are present in requirements.txt

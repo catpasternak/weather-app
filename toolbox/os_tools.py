@@ -48,8 +48,7 @@ def unzip_next_to(file_path):
 
 def create_city_folder(output_path, country, city):
     """
-    Creates folders if not existent according to following structure:
-    {output_folder}/{country}/{city}
+    Creates folders if not existent according to following structure: {output_folder}/{country}/{city}
     :param output_path: path to output folder
     :param country: country Alpha-2 code
     :param city: city name

@@ -56,7 +56,7 @@ def get_all_hist_temp(coords_tuple, threads=4):
     """
     Gets historic day temperature lists for all days in range: from 5 days ago till current moment.
     One list per day. Today temperatures list is provided for part of the day that has passed.
-    :param coords_tuple: latitude and longitude
+    :param coords_tuple: latitude, longitude
     :type coords_tuple: tuple[float]
     :param threads: number of threads for parallel request to weather service API
     :return: Lists of day temperatures for last 5 days plus part of today

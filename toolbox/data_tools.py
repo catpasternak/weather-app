@@ -174,7 +174,7 @@ def get_city_statistics(city_10days_temp):
     - delta between highest and lowest day max temperature
     - min temperature and day when it was fixed
     - max difference between max and min temperatures in one day and day when it was fixed
-    :param city_10days_temp: list of temperature min-max pairs during 10 days. Includes historic and forecast data
+    :param city_10days_temp: list of temperature min-max pairs during 10 days, includes historic and forecast data
     :type city_10days_temp: List[list]
     :rtype: tuple[tuple]
     """

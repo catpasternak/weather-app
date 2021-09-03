@@ -4,7 +4,7 @@ import time
 
 def local_timestamp_now(tz_shift):
     """
-    Returns current local time in unix scale in seconds
+    Returns current local time in unix style in seconds
     :param tz_shift: timezone shift in seconds in relation to UTC time
     :rtype: int
     """

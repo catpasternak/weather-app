@@ -43,7 +43,7 @@ def add_records_to_table(file_path, session, cls):
 
 def fill_table_from_csv(file_dir, session, cls):
     """
-    Adds valid records from csv files from given directory to hotels table
+    Adds valid records from csv files from given directory to hotels table.
     :param file_dir: path to directory with csv files
     :param session: SQLAlchemy Session object
     :param cls: table class model

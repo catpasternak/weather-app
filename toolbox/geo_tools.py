@@ -6,7 +6,7 @@ GEOCODE_API_KEY = 's23N9lets5Gey28fkbpt3ub8v4N6efyk'
 
 def get_address(latitude, longitude, api_key=GEOCODE_API_KEY):
     """
-    Reverse geocoding function that gets address for given coordinates. Uses OpenMapQuest service
+    Reverse geocoding function that gets address for given coordinates, uses OpenMapQuest service
     :param latitude: location latitude
     :param longitude: location longitude
     :param api_key: OpenMapQuest API key

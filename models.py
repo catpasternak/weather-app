@@ -24,7 +24,7 @@ class Hotel(Base):
 class CityData(Base):
     """
     Represents one city per each country with geographic and weather information.
-    Last 10 columns are intended for sequential days temperature lists starting from 5 days ago.
+    Last 10 columns are intended for sequential days temperature lists starting from 5 days ago
     """
     __tablename__ = 'temperature'
     id = sa.Column(sa.Integer, primary_key=True)

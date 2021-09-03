@@ -32,7 +32,7 @@ def main(source_path, output_path, threads, database):
         return False
     if threads > 9:
         threads = 9
-        click.echo('You exceeded maximum recommended number of threads for this application. It is reset to 9.')
+        click.echo('You exceeded maximum recommended number of threads for this application. It is reset to 9')
     click.echo(
         f'Execution started.\n'
         f'Source data will be retrieved from: {source_path}\n'
