@@ -4,8 +4,9 @@ import shutil
 
 
 def path_to_(*path_parts: str):
-    cwd = os.path.join(os.path.dirname(__file__), '..')
-    return os.path.join(cwd, *path_parts)
+    cwd = os.path.dirname(__file__)
+    root_dir = cwd.rsplit('/', 1)[0]
+    return os.path.join(root_dir, *path_parts)
 
 
 def unzip_next_to(file_path):
@@ -19,9 +20,9 @@ def unzip_next_to(file_path):
     :return: str
     """
     if not os.path.exists(path_to_(file_path)):
-        return f"Directory {path_to_(file_path)} doesn't exist"
+        return f"Directory {path_to_(file_path)} doesn't exist. Please provide existing directory"
     if not any((os.path.isdir(path_to_(file_path)), is_zipfile(path_to_(file_path)))):
-        return f"Directory {path_to_(file_path)} doesn't exist or is not a directory. Please provide existing directory"
+        return f"Directory {path_to_(file_path)} is not a valid directory. Please provide zip file or directory"
     new_dir = os.path.join(os.path.dirname(path_to_(file_path)), 'hotels_unzipped')
     if not os.path.exists(new_dir):
         os.mkdir(new_dir)
@@ -47,11 +48,3 @@ def create_city_folder(output_path, country, city):
     if not os.path.exists(path_to_(output_path, country, city)):
         os.mkdir(path_to_(output_path, country, city))
     return path_to_(output_path, country, city)
-
-"""
-    folder_path = path_to_(output_path, country, city)
-    if not os.path.exists(folder_path):
-        os.mkdir(path_to_(output_path, country))
-        os.mkdir(path_to_(output_path, country, city))
-    return folder_path
-"""

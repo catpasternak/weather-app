@@ -11,11 +11,17 @@ from toolbox.os_tools import *
 @click.option('-d', '--database', type=click.Path(), default='sqlite:///db.sqlite3', help='Database path')
 def main(source_path, output_path, threads, database):
     """
+    Main pipeline for processing hotels data.
+    Provides moderate command line interface with required and optional arguments.
+    Extracts valid records from csv files to database; finds cities with maximal number of hotels in each country;
+    for hotels in those cities brings physical addresses; gets temperature information for 10 days in total
+    starting from 5 days ago; creates temperature plots and other analytics; saves that analytics
+    to provided output folder along with all hotels addresses.
 
-    :param source_path: Path to zip folder with source data
-    :param output_path: Path to directory where results should be saved
-    :param threads: Number of threads in several I/O-bound functions
-    :param database: Database path
+    :param source_path: path to zip folder with source data, required argument
+    :param output_path: path to directory where results should be saved, required argument
+    :param threads: number of threads in several I/O-bound functions, optional argument
+    :param database: database path, optional argument
     :return: None
     """
 
@@ -40,7 +46,7 @@ def main(source_path, output_path, threads, database):
     major_cities = find_major_cities(session, MajorCity)
     fill_addresses_for_major_cities(session, Hotel, major_cities, threads=threads)
     fill_major_cities_table_with_coordinates(session, Hotel, CityData, major_cities)
-    fill_major_cities_table_with_temperatures(session, CityData)
+    fill_major_cities_table_with_temperatures(session, CityData, threads=threads)
     create_and_save_all_plots(session, CityData, output_path)
     write_temperature_analytics(session, CityData, output_path)
     write_from_db_to_files(output_path, session, Hotel, major_cities)

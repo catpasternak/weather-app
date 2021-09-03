@@ -52,7 +52,6 @@ def find_major_cities(session, cls):
     return {obj.country: obj.city for obj in query}
 
 
-
 def attach_address_if_in_major_city(hotel, major_cities):
     if hotel.city == major_cities.get(hotel.country) and not hotel.address:
         lat, lon = hotel.latitude, hotel.longitude
@@ -93,14 +92,14 @@ def fill_major_cities_table_with_coordinates(session, source_cls, target_cls, ma
         session.commit()
 
 
-def fill_major_cities_table_with_temperatures(session, cls):  # REFACTOR WITH MULTITHREADING
+def fill_major_cities_table_with_temperatures(session, cls, threads=4):
     cities = session.query(cls)
     if cities.first().today:
         return True
     coordinates = [(city.latitude, city.longitude) for city in cities]
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        hist_all_days_by_city = pool.map(get_all_hist_temp, coordinates)  # 7 generators x 6 lists x <=24 values
-        forecast_5days_by_city = pool.map(get_forecast_temp_list, coordinates)  # 7 gen x 1 tuple (list, list(lists))
+    with ThreadPoolExecutor(max_workers=threads) as pool:
+        hist_all_days_by_city = pool.map(get_all_hist_temp, coordinates)
+        forecast_5days_by_city = pool.map(get_forecast_temp_list, coordinates)
 
     for city in cities:
         hist_temp_list = list(next(hist_all_days_by_city))

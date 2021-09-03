@@ -35,11 +35,11 @@ def get_day_hist_temp(day_num, latitude, longitude, url=URL_HISTORIC, api_key=WE
     return day_temp_list
 
 
-def get_all_hist_temp(coords_tuple):
+def get_all_hist_temp(coords_tuple, threads=4):
     lat, lon = coords_tuple
     get_city_day_temp = partial(get_day_hist_temp, latitude=lat, longitude=lon)
     days = (day for day in range(-5, 1))
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=threads) as pool:
         results = pool.map(get_city_day_temp, days)
     return results
 
