@@ -8,3 +8,7 @@ Third argument is number of threads that will be used
 for requesting data from geocoding and weather services.
 Thread number argument is optional and should be used with flag
 '--threads' or '-t'.
+
+Example:
+
+>>> python3 console.py source_data/hotels.zip output_data --threads 4
