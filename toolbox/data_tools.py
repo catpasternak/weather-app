@@ -3,7 +3,7 @@ import os
 from iso3166 import countries_by_alpha2
 from matplotlib import pyplot as plt
 
-from .os_tools import create_city_folder
+from .os_tools import create_city_folder, path_to_
 from .time_tools import *
 
 
@@ -81,7 +81,8 @@ def create_and_save_city_temp_plot(country, city, temperature_lists, output_path
     :param temperature_lists: list of temperature min-max pairs during 10 days. Includes historic and forecast data
     :type temperature_lists: List[list]
     :param output_path: base output path for all countries
-    :return: None
+    :return: name of saved file
+    :rtype: Path
     """
     x = [i for i in range(1, 11)]
     y1 = [max(day) for day in temperature_lists]
@@ -100,7 +101,10 @@ def create_and_save_city_temp_plot(country, city, temperature_lists, output_path
     path_to_save = create_city_folder(output_path, country, city)
     file_path = os.path.join(path_to_save, f'{city}_plot.png')
     plt.savefig(file_path)
+    path_for_web = path_to_('static', 'images', f'{city}_plot.png')
+    plt.savefig(path_for_web)
     plt.clf()
+    return os.path.join('static', 'images', f'{city}_plot.png')
 
 
 def get_max_temp_day(city_10days_temp):

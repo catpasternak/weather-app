@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Country</th>
+        <th>City</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>10 days temperature graphic</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for city in cities %}
+        <tr>
+          <td>{{ city.country }}</td>
+          <td>{{ city.city }}</td>
+          <td>{{ city.latitude }}</td>
+          <td>{{ city.longitude }}</td>
+          <td><img src="{{ city.temperature_graphic }}" height="90">
+          <a href="{{ city.temperature_graphic }}">View full size</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable();
+    });
+  </script>
+{% endblock %}

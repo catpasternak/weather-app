@@ -3,9 +3,10 @@ from functools import partial
 
 import requests
 
+import secret
 from .time_tools import *
 
-WEATHER_API_KEY = "631f57b7539b1908d2fb62f79486fd95"
+WEATHER_API_KEY = secret.weather_api_key
 
 URL_CURRENT = "https://api.openweathermap.org/data/2.5/weather"
 URL_FORECAST = "https://api.openweathermap.org/data/2.5/forecast"

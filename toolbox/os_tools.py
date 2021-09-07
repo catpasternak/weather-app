@@ -3,10 +3,11 @@ import shutil
 from zipfile import ZipFile, is_zipfile
 
 
-def path_to_(*path_parts: str):
+def path_to_(*path_parts):
     """
     Path to directory or file from project root directory
     :param path_parts: directories on the way and destination directory or file
+    :type path_parts: List[str]
     :rtype: Path
     """
     cwd = os.path.dirname(__file__)

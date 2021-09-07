@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Country</th>
+        <th>City</th>
+        <th>Hotel</th>
+        <th>Address</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hotel in hotels %}
+        <tr>
+          <td>{{ hotel.country }}</td>
+          <td>{{ hotel.city }}</td>
+          <td>{{ hotel.name }}</td>
+          <td>{{ hotel.address }}</td>
+          <td>{{ hotel.latitude }}</td>
+          <td>{{ hotel.longitude }}</td>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable();
+    });
+  </script>
+{% endblock %}
