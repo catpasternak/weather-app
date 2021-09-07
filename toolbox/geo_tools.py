@@ -1,7 +1,8 @@
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import OpenMapQuest
+import secret
 
-GEOCODE_API_KEY = 's23N9lets5Gey28fkbpt3ub8v4N6efyk'
+GEOCODE_API_KEY = secret.geocode_api_key
 
 
 def get_address(latitude, longitude, api_key=GEOCODE_API_KEY):

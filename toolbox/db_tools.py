@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
-from models import Base
+from models import *
 
 from .os_tools import *
 from .data_tools import *
@@ -74,16 +74,36 @@ def find_major_cities(session, cls):
         ") as h3 group by h3.COU3) as h4 on (h4.COU4 = h.COU1 and h4.m = h.I)"
                 ).columns(cls.country, cls.city)
     query = session.query(cls).from_statement(stmt).all()
-    return {obj.country: obj.city for obj in query}
+    major_cities = {obj.country: obj.city for obj in query}
+    return major_cities
+
+
+def fill_major_cities_table(session, cls, major_cities):
+    """
+    Fills major cities table with countries and cities
+    :param session: SQLAlchemy Session object
+    :param cls: table class model
+    :param major_cities: country-city pairs
+    :type major_cities: dict
+    :return: Union[True,None]
+    """
+    if session.query(cls).first():
+        return True
+    for country, city in major_cities.items():
+        city = cls(country=country, city=city)
+        session.add(city)
+    session.commit()
 
 
 def attach_address_if_in_major_city(hotel, major_cities):
     """
     Attaches address attribute to hotel object
     :param hotel: object of hotel model class
-    :param major_cities:
+    :param major_cities: country-city pairs
+    :type major_cities: dict
     :return: object of hotel class with address attribute
     """
+    # if hotel.city == 'Houston' and not hotel.address:
     if hotel.city == major_cities.get(hotel.country) and not hotel.address:
         lat, lon = hotel.latitude, hotel.longitude
         address = get_address(lat, lon)
@@ -210,7 +230,8 @@ def get_cities_statistics(session, cls):
 
 def create_and_save_all_plots(session, cls, output_path):
     """
-    Creates temperature plots for each major city based on data from table and saves them to cities folders
+    Creates temperature plots for each major city based on data from table and saves them to cities folders.
+    Adds absolute path to file in table record
     :param session: SQLAlchemy Session object
     :param cls: table class model
     :param output_path: path to base output folder
@@ -221,7 +242,9 @@ def create_and_save_all_plots(session, cls, output_path):
     temp_columns = column_names[-10:]
     for city in cities:
         day_temperatures = [json.loads(city.__getattribute__(day)) for day in temp_columns]
-        create_and_save_city_temp_plot(city.country, city.city, day_temperatures, output_path)
+        file_path = create_and_save_city_temp_plot(city.country, city.city, day_temperatures, output_path)
+        city.temperature_graphic = file_path
+    session.commit()
 
 
 def analyse_statistics(session, cls):

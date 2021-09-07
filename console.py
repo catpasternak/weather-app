@@ -4,6 +4,8 @@ from models import *
 from toolbox.db_tools import *
 from toolbox.os_tools import *
 
+from web import *
+
 
 @click.command()
 @click.argument('source_path', type=click.Path())
@@ -25,7 +27,13 @@ def main(source_path, output_path, threads, database):
     :param database: database path, optional argument
     :return: None
     """
-
+    click.echo(
+        f'Execution started.\n'
+        f'Source data will be retrieved from: {source_path}\n'
+        f'Results will be saved in directory: {output_path}\n'
+    )
+    start = time.time()
+    click.echo('Unzipping...')
     unzipped = unzip_next_to(source_path)
     if not os.path.isdir(unzipped):
         click.echo(f"ERROR: {unzipped}")
@@ -33,25 +41,30 @@ def main(source_path, output_path, threads, database):
     if threads > 9:
         threads = 9
         click.echo('You exceeded maximum recommended number of threads for this application. It is reset to 9')
-    click.echo(
-        f'Execution started.\n'
-        f'Source data will be retrieved from: {source_path}\n'
-        f'Results will be saved in directory: {output_path}\n'
-    )
-    start = time.time()
 
     session = start_db_session(database)
+    click.echo('Cleaning data...')
     fill_table_from_csv(unzipped, session, Hotel)
+    click.echo('Choosing cities with max number of hotels in country...')
     major_cities = find_major_cities(session, MajorCity)
+    fill_major_cities_table(session, MajorCity, major_cities)
+    click.echo('Fetching addresses for hotels located in these cities...')
     fill_addresses_for_major_cities(session, Hotel, major_cities, threads=threads)
+    click.echo('Calculating cities centers coordinates...')
     fill_major_cities_table_with_coordinates(session, Hotel, CityData, major_cities)
+    click.echo('Fetching weather statistics for cities centers...')
     fill_major_cities_table_with_temperatures(session, CityData, threads=threads)
+    click.echo('Creating and saving temperature plots for cities centers...')
     create_and_save_all_plots(session, CityData, output_path)
+    click.echo('Creating and saving cities temperature analytics...')
     write_temperature_analytics(session, CityData, output_path)
+    click.echo('Saving cities hotels data to csv files...')
     write_from_db_to_files(output_path, session, Hotel, major_cities)
 
     execution_time = time.time() - start
     click.echo(f'Total execution time: {execution_time} seconds.')
+
+    app.run()
 
 
 if __name__ == '__main__':
