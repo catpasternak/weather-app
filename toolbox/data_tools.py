@@ -81,7 +81,7 @@ def create_and_save_city_temp_plot(country, city, temperature_lists, output_path
     :param temperature_lists: list of temperature min-max pairs during 10 days. Includes historic and forecast data
     :type temperature_lists: List[list]
     :param output_path: base output path for all countries
-    :return: name of saved file
+    :return: path to saved file from project root
     :rtype: Path
     """
     x = [i for i in range(1, 11)]

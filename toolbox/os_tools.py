@@ -1,6 +1,7 @@
 import os
+import pathlib
 import shutil
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile, BadZipFile, is_zipfile
 
 
 def path_to_(*path_parts):
@@ -28,22 +29,21 @@ def unzip_next_to(file_path):
     """
     if not os.path.exists(path_to_(file_path)):
         return f"Directory {path_to_(file_path)} doesn't exist. Please provide existing directory"
-    if not any((os.path.isdir(path_to_(file_path)), is_zipfile(path_to_(file_path)))):
-        return f"Directory {path_to_(file_path)} is not a valid directory. Please provide zip file or directory"
     new_dir = os.path.join(os.path.dirname(path_to_(file_path)), 'hotels_unzipped')
-    if not os.path.exists(new_dir):
-        os.mkdir(new_dir)
-    if not is_zipfile(file_path):
+    pathlib.Path(new_dir).mkdir(exist_ok=True)
+    try:
+        with ZipFile(file_path, 'r') as zipObj:
+            if not os.listdir(new_dir):
+                zipObj.extractall(new_dir)
+    except IsADirectoryError:
         csv_files = [f for f in os.listdir(path_to_(file_path)) if f.endswith('.csv')]
         if not csv_files:
             return f'{file_path} is neither a zip file, nor a directory with csv files inside'
         if new_dir != path_to_(file_path):
             for file_ in csv_files:
                 shutil.copy(path_to_(file_path, file_), new_dir)
-        return new_dir
-    with ZipFile(file_path, 'r') as zipObj:
-        if not os.listdir(new_dir):
-            zipObj.extractall(new_dir)
+    except BadZipFile:
+        return f"Directory {path_to_(file_path)} is not a zip file. Please provide zip file or directory"
     return new_dir
 
 
@@ -56,10 +56,6 @@ def create_city_folder(output_path, country, city):
     :return: full path to city folder
     :rtype: Path
     """
-    if not os.path.exists(path_to_(output_path)):
-        os.mkdir(path_to_(output_path))
-    if not os.path.exists(path_to_(output_path, country)):
-        os.mkdir(path_to_(output_path, country))
-    if not os.path.exists(path_to_(output_path, country, city)):
-        os.mkdir(path_to_(output_path, country, city))
-    return path_to_(output_path, country, city)
+    new_dir = path_to_(output_path, country, city)
+    pathlib.Path(new_dir).mkdir(parents=True, exist_ok=True)
+    return new_dir

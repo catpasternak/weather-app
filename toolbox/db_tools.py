@@ -103,7 +103,7 @@ def attach_address_if_in_major_city(hotel, major_cities):
     :type major_cities: dict
     :return: object of hotel class with address attribute
     """
-    # if hotel.city == 'Houston' and not hotel.address:
+    # if hotel.city == 'Houston' and not hotel.address:  # for testing while developing to preserve free API calls limit
     if hotel.city == major_cities.get(hotel.country) and not hotel.address:
         lat, lon = hotel.latitude, hotel.longitude
         address = get_address(lat, lon)
@@ -309,8 +309,7 @@ def write_temperature_analytics(session, cls, output_path):
     :return: None
     """
     file_path = path_to_(output_path, 'temperature_analytics.json')
-    if not os.path.exists(path_to_(output_path)):
-        os.mkdir(path_to_(output_path))
+    pathlib.Path(path_to_(output_path)).mkdir(exist_ok=True)
     data_to_write = analyse_statistics(session, cls)
     with open(file_path, 'w') as output_file:
         json.dump(data_to_write, output_file, indent=4)
