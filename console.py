@@ -1,10 +1,19 @@
+import os
+import time
+
 import click
 
-from models import *
-from toolbox.db_tools import *
-from toolbox.os_tools import *
-
-from web import *
+from models import CityData, Hotel, MajorCity
+from toolbox.db_tools import (create_and_save_all_plots,
+                              fill_addresses_for_major_cities,
+                              fill_major_cities_table,
+                              fill_major_cities_table_with_coordinates,
+                              fill_major_cities_table_with_temperatures,
+                              fill_table_from_csv, find_major_cities,
+                              start_db_session, write_from_db_to_files,
+                              write_temperature_analytics)
+from toolbox.os_tools import unzip_next_to
+from web import configure_app
 
 
 @click.command()
@@ -30,7 +39,7 @@ def main(source_path, output_path, threads, database):
     click.echo(
         f'Execution started.\n'
         f'Source data will be retrieved from: {source_path}\n'
-        f'Results will be saved in directory: {output_path}\n'
+        f'Results will be saved in directory: {output_path}'
     )
     start = time.time()
     click.echo('Unzipping...')
@@ -64,7 +73,8 @@ def main(source_path, output_path, threads, database):
     execution_time = time.time() - start
     click.echo(f'Total execution time: {execution_time} seconds.')
 
-    app.run()
+    web_app = configure_app(db_path=database)
+    web_app.run()
 
 
 if __name__ == '__main__':

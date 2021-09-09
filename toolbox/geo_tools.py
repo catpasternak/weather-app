@@ -1,5 +1,6 @@
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import OpenMapQuest
+
 import secret
 
 GEOCODE_API_KEY = secret.geocode_api_key

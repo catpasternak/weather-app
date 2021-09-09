@@ -1,7 +1,7 @@
 import os
 import pathlib
 import shutil
-from zipfile import ZipFile, BadZipFile, is_zipfile
+from zipfile import BadZipFile, ZipFile
 
 
 def path_to_(*path_parts):
@@ -33,8 +33,7 @@ def unzip_next_to(file_path):
     pathlib.Path(new_dir).mkdir(exist_ok=True)
     try:
         with ZipFile(file_path, 'r') as zipObj:
-            if not os.listdir(new_dir):
-                zipObj.extractall(new_dir)
+            zipObj.extractall(new_dir)
     except IsADirectoryError:
         csv_files = [f for f in os.listdir(path_to_(file_path)) if f.endswith('.csv')]
         if not csv_files:

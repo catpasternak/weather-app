@@ -1,18 +1,24 @@
 import csv
-from collections import defaultdict
+import datetime
 import json
+import os
+import pathlib
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 
 import numpy as np
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
-from models import *
+from models import Base
 
-from .os_tools import *
-from .data_tools import *
-from .geo_tools import *
-from .weather_tools import *
+from .data_tools import (create_and_save_city_temp_plot, find_city_center,
+                         get_city_statistics, read_validated)
+from .geo_tools import get_address
+from .os_tools import create_city_folder, path_to_
+from .weather_tools import get_all_hist_temp, get_forecast_temp_list
 
 
 def start_db_session(db_path):
@@ -105,8 +111,8 @@ def attach_address_if_in_major_city(hotel, major_cities):
     """
     # if hotel.city == 'Houston' and not hotel.address:  # for testing while developing to preserve free API calls limit
     if hotel.city == major_cities.get(hotel.country) and not hotel.address:
-        lat, lon = hotel.latitude, hotel.longitude
-        address = get_address(lat, lon)
+        latitude, longitude = hotel.latitude, hotel.longitude
+        address = get_address(latitude, longitude)
         hotel.address = address
     return hotel
 
@@ -211,7 +217,7 @@ def get_cities_statistics(session, cls):
     Gets cities temperatures with relevant days for following analysis
     :param session: SQLAlchemy Session object
     :param cls: table class model
-    :return: all cities all days tempeartures
+    :return: all cities all days temperatures
     """
     cities = session.query(cls)
     column_names = [column.key for column in cls.__table__.columns]
@@ -329,7 +335,7 @@ def yield_filtered_from_db(session, cls, country, city):
         yield hotel.country, hotel.city, [hotel.name, hotel.address, hotel.latitude, hotel.longitude]
 
 
-def write_to_city_csv(base_path, session, cls, country, city, cities_=[], counter_=[0], file_num=[0]):
+def write_to_city_csv(base_path, session, cls, country, city, _cities=[], _counter=[0], file_num=[0]):
     """
     Writes city hotels data to csv files, maximum 100 records per file
     :param base_path: path to base output folder
@@ -337,29 +343,29 @@ def write_to_city_csv(base_path, session, cls, country, city, cities_=[], counte
     :param cls: table class model
     :param country: country Alpha-2 code
     :param city: city name
-    :param cities_: service list for correct records per file counting
-    :param counter_: service list for counting till 100 records
+    :param _cities: service list for correct records per file counting
+    :param _counter: service list for counting till 100 records
     :param file_num: sequence number of file
     :return: None
     """
-    if city not in cities_:
-        counter_[0] = 0
+    if city not in _cities:
+        _counter[0] = 0
         file_num[0] += 1
-        cities_.append(city)
+        _cities.append(city)
     db_generator = yield_filtered_from_db(session, cls, country, city)
     for record in db_generator:
         city_folder_path = create_city_folder(base_path, country, city)
-        if counter_[0] == 100:
+        if _counter[0] == 100:
             file_num[0] += 1
-            counter_[0] = 0
-        if counter_[0] == 0:
+            _counter[0] = 0
+        if _counter[0] == 0:
             with open(f'{city_folder_path}/hotels_{file_num[0]}.csv', 'w', encoding='UTF8', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(['hotel', 'address', 'latitude', 'longitude'])
         with open(f'{city_folder_path}/hotels_{file_num[0]}.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(record)
-        counter_[0] += 1
+        _counter[0] += 1
 
 
 def write_from_db_to_files(base_path, session, cls, major_cities):
