@@ -19,7 +19,7 @@ def test_unzip_func_return_message_when_path_not_zip_or_directory():
     provided_source_path = 'tests/test_data/text.txt'
     result = unzip_next_to(provided_source_path)
     assert result == f"" \
-                     f"Directory {path_to_(provided_source_path)} is not a valid directory. " \
+                     f"Directory {path_to_(provided_source_path)} is not a zip file. " \
                      f"Please provide zip file or directory"
 
 

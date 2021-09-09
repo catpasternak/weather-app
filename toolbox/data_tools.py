@@ -1,10 +1,10 @@
+import datetime
 import os
 
 from iso3166 import countries_by_alpha2
 from matplotlib import pyplot as plt
 
 from .os_tools import create_city_folder, path_to_
-from .time_tools import *
 
 
 def is_country(country):

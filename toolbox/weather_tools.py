@@ -5,7 +5,8 @@ from functools import partial
 import requests
 
 import secret
-from .time_tools import *
+
+from .time_tools import prev_n_day_end_local, today_end_local_ts
 
 WEATHER_API_KEY = secret.weather_api_key
 
@@ -29,7 +30,7 @@ def get_city_timezone(latitude, longitude, url=URL_CURRENT, api_key=WEATHER_API_
     try:
         return resp.json()['timezone']
     except (KeyError, TypeError):
-        raise ConnectionError(f'Unable to fetch data from {url}. Check url or try later')
+        raise KeyError(f'Unexpected response from {url}. Check url or try later')
 
 
 def get_day_hist_temp(day_num, latitude, longitude, url=URL_HISTORIC, api_key=WEATHER_API_KEY):
@@ -57,7 +58,7 @@ def get_day_hist_temp(day_num, latitude, longitude, url=URL_HISTORIC, api_key=WE
         day_temp_list = [record['temp'] for record in data['hourly']]
         return day_temp_list
     except (KeyError, TypeError):
-        raise ConnectionError(f'Unable to fetch data from {url}. Check url or try later')
+        raise KeyError(f'Unexpected response from {url}. Check url or try later')
 
 
 def get_all_hist_temp(coords_tuple, threads=4):
@@ -99,4 +100,4 @@ def get_forecast_temp_list(coord_tuple, url=URL_FORECAST, api_key=WEATHER_API_KE
         forecast_4days = [forecast_4days_plus[start:stop] for start, stop in ((0, 8), (8, 16), (16, 24), (24, 32))]
         return forecast_today, forecast_4days
     except (KeyError, TypeError):
-        raise ConnectionError(f'Unable to fetch data from {url}. Check url or try later')
+        raise KeyError(f'Unexpected response from {url}. Check url or try later')

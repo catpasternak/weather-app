@@ -1,4 +1,5 @@
 import pytest
+import requests
 from toolbox.weather_tools import get_city_timezone, get_all_hist_temp, get_forecast_temp_list
 
 WEATHER_API_KEY = "631f57b7539b1908d2fb62f79486fd95"
@@ -11,6 +12,13 @@ URL_HISTORIC = "https://api.openweathermap.org/data/2.5/onecall/timemachine"
 def test_get_city_timezone_returns_correct_timezone():
     moscow_timezone = get_city_timezone(55.751244, 37.618423, url=URL_CURRENT, api_key=WEATHER_API_KEY)
     assert moscow_timezone == 3*60*60
+
+
+def test_error_raised_with_incorrect_url():
+    params = {'appid': '123', 'lat': 55.751244, 'lon': 37.618423}
+    resp = requests.get(URL_CURRENT, params=params)
+    with pytest.raises(KeyError):
+        return resp.json()['timezone']
 
 
 def test_historic_5day_temperature_returns_reasonable_float_values_for_each_day():
