@@ -63,14 +63,14 @@ def find_city_center(coordinates_list):
     :return: latitude, longitude
     :rtype: tuple(float)
     """
-    lat_sum = lon_sum = 0
+    latitude_sum = longitude_sum = 0
     count = 0
     for latitude, longitude in coordinates_list:
-        lat_sum += latitude
-        lon_sum += longitude
+        latitude_sum += latitude
+        longitude_sum += longitude
         count += 1
-    avg_lat, avg_lon = lat_sum/count, lon_sum/count
-    return avg_lat, avg_lon
+    avg_latitude, avg_longitude = latitude_sum/count, longitude_sum/count
+    return avg_latitude, avg_longitude
 
 
 def create_and_save_city_temp_plot(country, city, temperature_lists, output_path):
@@ -119,8 +119,7 @@ def get_max_temp_day(city_10days_temp):
     max_temp_day = None
     for day_data in city_10days_temp:
         if day_data[2] > max_temp:
-            max_temp_day = day_data[0]
-            max_temp = day_data[2]
+            max_temp_day, max_temp = day_data[0], day_data[2]
     return max_temp, max_temp_day,
 
 
@@ -149,8 +148,7 @@ def get_min_temp_day(city_10days_temp):
     min_temp_day = None
     for day_data in city_10days_temp:
         if day_data[1] < min_temp:
-            min_temp_day = day_data[0]
-            min_temp = day_data[1]
+            min_temp_day, min_temp = day_data[0], day_data[1]
     return min_temp, min_temp_day,
 
 
